@@ -28,10 +28,11 @@ public class ApiTests
     public void get_posts()
     {
         var request = new RestRequest("posts/", Method.Get);
-        var response = client.Execute<Post>(request);
+        var response = client.Execute<List<Post>>(request);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(response.Data, Is.Not.Null);
+        Assert.That(response.Data, Is.Not.Empty);
     }
 
     [Test]
