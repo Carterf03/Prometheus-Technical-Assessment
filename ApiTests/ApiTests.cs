@@ -20,7 +20,27 @@ public class ApiTests
         var response = client.Execute<Post>(request);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.Data, Is.Not.Null);
         Assert.That(response.Data.id, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void get_posts()
+    {
+        var request = new RestRequest("posts/", Method.Get);
+        var response = client.Execute<Post>(request);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.Data, Is.Not.Null);
+    }
+
+    [Test]
+    public void get_nonexisting_post()
+    {
+        var request = new RestRequest("posts/0", Method.Get);
+        var response = client.Execute<Post>(request);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
 
     [Test]
@@ -31,14 +51,36 @@ public class ApiTests
         var response = client.Execute<Post>(request);
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+        Assert.That(response.Data, Is.Not.Null);
         Assert.That(response.Data.userId, Is.EqualTo(1));
         Assert.That(response.Data.title, Is.EqualTo("New Title"));
         Assert.That(response.Data.body, Is.EqualTo("This is a new post."));
     }
 
-    // [Test]
-    // public void test3()
-    // {
+    [Test]
+    public void update_post()
+    {
+        var request = new RestRequest("posts/1", Method.Put);
+        request.AddJsonBody(new { userId = 3, title = "Updated Title", body = "I am updating this post." });
+        var response = client.Execute<Post>(request);
 
-    // }
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.Data, Is.Not.Null);
+        Assert.That(response.Data.userId, Is.EqualTo(3));
+        Assert.That(response.Data.title, Is.EqualTo("Updated Title"));
+        Assert.That(response.Data.body, Is.EqualTo("I am updating this post."));
+    }
+
+    [Test]
+    public void delete_post()
+    {
+        var request = new RestRequest("posts/1", Method.Delete);
+        var response = client.Execute<Post>(request);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(response.Data, Is.Not.Null);
+        Assert.That(response.Data.userId, Is.EqualTo(0));
+        Assert.That(response.Data.title, Is.Null);
+        Assert.That(response.Data.body, Is.Null);
+    }
 }
