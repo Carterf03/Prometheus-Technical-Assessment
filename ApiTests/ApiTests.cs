@@ -5,7 +5,7 @@ using System.Net;
 [TestFixture]
 public class ApiTests
 {
-    private RestClient client;
+    private RestClient client = null!;
 
     [SetUp]
     public void Setup()
